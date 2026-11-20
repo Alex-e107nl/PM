@@ -14,22 +14,22 @@ if (!defined('e107_INIT')) { exit; }
 
 if(deftrue('BOOTSTRAP') && deftrue('FONTAWESOME'))
 {
-	define('PM_INBOX_ICON',  e107::getParser()->toGlyph('fa-inbox'));
-	define('PM_OUTBOX_ICON', e107::getParser()->toGlyph('fa-inbox'));
-	define('NEWPM_ANIMATION', e107::getParser()->toGlyph('fa-envelope'));
+	define('PM_INBOX_ICON',  pm_icon('inbox'));
+	define('PM_OUTBOX_ICON', pm_icon('outbox'));
+	define('NEWPM_ANIMATION', pm_icon('inbox'));
 }
 else
 {
-	if (!defined('PM_INBOX_ICON'))  define('PM_INBOX_ICON',  "");
-	if (!defined('PM_OUTBOX_ICON')) define('PM_OUTBOX_ICON', "");
-	if (!defined('NEWPM_ANIMATION')) define('NEWPM_ANIMATION', "");
+	if (!defined('PM_INBOX_ICON'))  define('PM_INBOX_ICON',  pm_icon('inbox'));
+	if (!defined('PM_OUTBOX_ICON')) define('PM_OUTBOX_ICON', pm_icon('outbox'));
+	if (!defined('NEWPM_ANIMATION')) define('NEWPM_ANIMATION', pm_icon('inbox'));
 }
 
 /* Use e107's URL builder with query params – handles SEF / non-SEF / Windows paths */
-$inboxUrl   = e107::url('pm', 'index', '', array('query' => array('mode' => 'inbox')));
-$outboxUrl  = e107::url('pm', 'index', '', array('query' => array('mode' => 'outbox')));
-$blockedUrl = e107::url('pm', 'index', '', array('query' => array('mode' => 'blocked')));
-$composeUrl = e107::url('pm', 'index', '', array('query' => array('mode' => 'send')));
+$inboxUrl   = pm_url('inbox');
+$outboxUrl  = pm_url('outbox');
+$blockedUrl = pm_url('blocked');
+$composeUrl = pm_url('send');
 
 $PM_MENU_WRAPPER['PM_SEND_PM_LINK']          = "<a class='btn btn-sm btn-primary w-100 mt-2' href='" . $composeUrl . "'>" . LAN_PLUGIN_PM_NEW . "</a>";
 $PM_MENU_WRAPPER['PM_INBOX_FILLED']          = "<span class='badge text-bg-secondary'>[{---}%]</span>";

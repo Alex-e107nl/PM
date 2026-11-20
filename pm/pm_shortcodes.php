@@ -255,6 +255,10 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 					$t = time();
 					$value = "\n\n\n\n\n\n\n[quote{$t}={$this->var['from_name']}]\n".trim($this->var['pm_text'])."[/quote{$t}]";
 				}
+				else
+				{
+					$value = $this->var['pm_text'];
+				}
 			}
 
 			$options = array(
@@ -351,10 +355,11 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 				{
 					list($timestamp, $fromid, $rand, $filename) = explode("_", $a, 4);
 					$url = $this->url('action/get', array('id' => $this->var['pm_id'], 'index' => $i));
-					$ret .= "<li>".(deftrue('FONTAWESOME') ? $tp->toGlyph('fa-paperclip') : '')."<a href='".$url."'>{$filename}</a></li>";
+					$ret .= "<li>" . pm_icon('attach') . "<a href='".$url."'>{$filename}</a></li>";
 					$i++;
 				}
 			}
+			return $ret;
 		}
 
 
@@ -505,7 +510,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 				$ret = "<a href='".$ret."'>".$ret."</a>";
 				*/
 
-				$url = e107::url('pm','index')."?show.{$this->var['pm_id']}{$extra}";
+				$url = pm_url('show.'.$this->var['pm_id'].$extra);
 
 				$ret = "<a href='".$url."'>".$ret."</a>";
 			}
@@ -538,11 +543,11 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 		{
 			if($this->var['pm_read'] > 0 )
 			{
-				return defset('PM_READ_ICON');
+				return pm_icon('check');
 			}
 			else
 			{
-				return defset('PM_UNREAD_ICON');
+				return pm_icon('dot');
 			}
 		}
 
@@ -609,13 +614,13 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 
 			if(in_array($this->var['pm_from'], $this->pmBlocks))
 			{
-				$icon = (deftrue('FONTAWESOME')) ? e107::getParser()->toGlyph('fa-user-plus','fw=1') : "<img src='".e_PLUGIN_ABS."pm/images/mail_unblock.png'  alt='".LAN_PM_51."' class='icon S16' />";
+				$icon = pm_icon('unblock');
 
 				return "<a class='btn  btn-default btn-secondary btn-danger' href='".$this->url('action/unblock', 'id='.$this->var['pm_from'])."' title='".LAN_PM_51."'>".$icon."</a>";
 			}
 			else
 			{
-				$icon = (deftrue('FONTAWESOME')) ? e107::getParser()->toGlyph('fa-user-times','fw=1') : "<img src='".e_PLUGIN_ABS."pm/images/mail_block.png'  alt='".LAN_PM_50."' class='icon S16' />";
+				$icon = pm_icon('block');
 
 				return "<a class='btn  btn-default btn-secondary' href='".$this->url('action/block', 'id='.$this->var['pm_from'])."' title='".LAN_PM_50."'>".$icon."</a>";
 			}
@@ -650,7 +655,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 		public function sc_pm_delete_selected()
 		{
 			$tp = e107::getParser();
-			return e107::getForm()->button('pm_delete_selected',1,'delete',$tp->toGlyph('fa-trash').LAN_PM_53);
+			return e107::getForm()->button('pm_delete_selected',1,'delete',pm_icon('delete').' '.LAN_PM_53);
 		//	return "<input type='submit' name='pm_delete_selected' class='button btn btn-sm btn-danger' value='".LAN_PM_53."' />";
 		}
 
@@ -691,7 +696,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 				// pm_id is mapped insisde the config to id key
 				$ret = "
 				<form method='post' action='".$this->url('action/reply', $this->var)."'>
-				<input type='checkbox' name='quote' /> ".LAN_PM_54." &nbsp;&nbsp;&nbsp;<input class='btn btn-primary button' type='submit' name='reply' value='".LAN_PM_55."' />
+				<input class='btn btn-primary button' type='submit' name='reply' value='".LAN_PM_55."' />&nbsp;&nbsp;&nbsp;<input type='checkbox' name='quote' /> ".LAN_PM_54."
 				</form>
 				";
 				return $ret;
@@ -765,19 +770,70 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 			}
 
 			$type   = !empty($parmsarray['type']) ? $parmsarray['type'] : 'inbox';
-			// Force numbered pagination (e107 default is a dropdown).
-			// 'default' is automatically upgraded to the Bootstrap numbered pager on Bootstrap sites.
-			$prefix = 'tmpl_prefix=' . ( !empty($parmsarray['tmpl_prefix']) ? $parmsarray['tmpl_prefix'] : 'default' ) . '&navcount=10&';
 			// Keep the active mailbox search (?pm_search=...) alive on pager links.
-			$pmSearchQs = '';
 			$pmSearch = trim((string) varset($_GET['pm_search'], ''));
-			if($pmSearch !== '')
-			{
-				$pmSearchQs = '&pm_search=' . rawurlencode($pmSearch);
-			}
-			$url    = rawurlencode(e_SELF.'?'.$type.'.--FROM--'.$pmSearchQs);
 
-			return e107::getParser()->parseTemplate("{NEXTPREV=".$prefix."total={$this->pmNextPrev['total']}&amount={$this->pmPrefs['perpage']}&current={$this->pmNextPrev['start']}&url=".$url."}");
+						// Compact pagination: 1 2 … 7 8 9 … 78 with arrow buttons
+			$perpage = (int) $this->pmPrefs['perpage'];
+			$total   = (int) $this->pmNextPrev['total'];
+			$start   = (int) $this->pmNextPrev['start'];
+			$totalPages = $perpage > 0 ? (int) ceil($total / $perpage) : 1;
+			$currentPage = $perpage > 0 ? (int) floor($start / $perpage) + 1 : 1;
+
+			if ($totalPages <= 1) return null;
+
+			// Build page list: always show 1 and last, window of 3 around current
+			$pages = array();
+			$pages[] = 1;
+			$winStart = max(2, $currentPage - 1);
+			$winEnd   = min($totalPages - 1, $currentPage + 1);
+			if ($winStart > 2) $pages[] = '…';
+			for ($p = $winStart; $p <= $winEnd; $p++) $pages[] = $p;
+			if ($winEnd < $totalPages - 1) $pages[] = '…';
+			if ($totalPages > 1) $pages[] = $totalPages;
+
+			// Helper: build URL for a given page (1-based)
+			$mkUrl = function ($pg) use ($type, $perpage, $pmSearch) {
+				$offset = ($pg - 1) * $perpage;
+				if ($offset === 0) {
+					$u = pm_url($type);
+				} else {
+					$u = pm_url($type . '.' . $offset);
+				}
+				if ($pmSearch !== '') {
+					$u .= (strpos($u, '?') === false ? '?' : '&') . 'pm_search=' . urlencode($pmSearch);
+				}
+				return $u;
+			};
+
+			$h = '<ul class="pagination pagination-sm mb-0">';
+
+			// Previous arrow
+			if ($currentPage > 1) {
+				$h .= '<li class="page-item"><a class="page-link" href="' . $mkUrl($currentPage - 1) . '" aria-label="Previous">&laquo;</a></li>';
+			} else {
+				$h .= '<li class="page-item disabled"><span class="page-link">&laquo;</span></li>';
+			}
+
+			// Page numbers
+			foreach ($pages as $p) {
+				if ($p === '…') {
+					$h .= '<li class="page-item disabled"><span class="page-link">…</span></li>';
+				} else {
+					$cls = ($p === $currentPage) ? ' active' : '';
+					$h .= '<li class="page-item' . $cls . '"><a class="page-link" href="' . $mkUrl($p) . '">' . $p . '</a></li>';
+				}
+			}
+
+			// Next arrow
+			if ($currentPage < $totalPages) {
+				$h .= '<li class="page-item"><a class="page-link" href="' . $mkUrl($currentPage + 1) . '" aria-label="Next">&raquo;</a></li>';
+			} else {
+				$h .= '<li class="page-item disabled"><span class="page-link">&raquo;</span></li>';
+			}
+
+			$h .= '</ul>';
+			return $h;
 		}
 
 
@@ -843,7 +899,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 				return null;
 			}
 
-			return "<a href='".$this->url('action/delete-blocked', array('id' => $this->pmBlocked['pm_block_from']))."'><img src='".e_PLUGIN_ABS."pm/images/mail_delete.png' title='".LAN_DELETE."' alt='".LAN_DELETE."' class='icon S16' /></a>";
+			return "<a href='".$this->url('action/delete-blocked', array('id' => $this->pmBlocked['pm_block_from']))."' title='".LAN_DELETE."'>" . pm_icon('delete') . "</a>";
 		}
 
 
@@ -856,11 +912,11 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 		public function sc_pm_compose()
 		{
 			$tp = e107::getParser();
-			$urlCompose = e107::url('pm','index','', array('query'=>array('mode'=>'send')));
+			$urlCompose = pm_url('send');
 
 			$class = (!empty($parm['class'])) ? $parm['class'] : 'btn btn-sm btn-primary btn-block-level';
 
-			return "<a class='".$class."' href='".$urlCompose."'>".$tp->toGlyph('fa-edit',' ')."".defset('LAN_PLUGIN_PM_NEW')."</a>";
+			return "<a class='".$class."' href='".$urlCompose."'>" . pm_icon('edit') . ' '.defset('LAN_PLUGIN_PM_NEW')."</a>";
 		}
 
 
@@ -878,7 +934,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 
 		if('link' === $parm)
 		{
-			$ret = "<a href='".e107::url('pm', 'index')."?draft.".intval(varset($this->var['pm_draft_id'], 0))."'>".$ret."</a>";
+			$ret = "<a href='".pm_url('draft'.intval(varset($this->var['pm_draft_id'], 0)))."'>".$ret."</a>";
 		}
 		return $ret;
 	}
@@ -921,10 +977,8 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 			return '';
 		}
 		$label = defset('LAN_PM_134', 'Delete draft');
-		$icon  = deftrue('FONTAWESOME')
-			? e107::getParser()->toGlyph('fa-trash')
-			: "<img src='".e_PLUGIN_ABS."pm/images/mail_delete.png' class='icon S16' alt='' />";
-		$url   = pm_actionUrl(e107::url('pm', 'index').'?deletedraft.'.$id, '&amp;');
+		$icon  = pm_icon('delete');
+		$url   = pm_actionUrl(pm_url('deletedraft.'.$id), '&amp;');
 
 		return "<a class='btn btn-sm btn-outline-secondary' href='".$url."' title='".$label."' aria-label='".$label."'>".$icon."</a>";
 	}
@@ -952,7 +1006,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 	public function sc_pm_save_draft_button()
 	{
 		$label = defset('LAN_PM_132', 'Save draft');
-		$icon  = deftrue('FONTAWESOME') ? e107::getParser()->toGlyph('fa-pencil').' ' : '';
+		$icon  = pm_icon('edit').' ';
 		return "<button type='submit' name='savedraft' class='btn btn-outline-secondary' value='".$label."'>".$icon.$label."</button>";
 	}
 
@@ -1026,7 +1080,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 				$route = explode('/', $route, 2);
 			}
 
-			$base = e107::url('pm','index').'?';
+			$base = pm_url_prefix();
 			$ret = '';
 
 			switch($route[1])

@@ -46,21 +46,21 @@ class pm_shortcodes extends e_shortcode
 		if(!empty($mbox['inbox']['new']))
 		{
 			$count = "<span class='label label-warning'>".$mbox['inbox']['new']."</span>";
-			$icon  = $tp->toGlyph('fa-envelope');
+			$icon  = pm_icon('inbox');
 			$aria  = LAN_PLUGIN_PM_NAV.', '.intval($mbox['inbox']['new']).' ' . LAN_PLUGIN_PM_UNREAD;
 		}
 		else
 		{
-			$icon  = $tp->toGlyph('fa-envelope-o');
+			$icon  = pm_icon('inbox');
 			$count = '';
 			$aria  = LAN_PLUGIN_PM_NAV;
 		}
 
 		$aria = $tp->toAttribute($aria);
 
-		$urlInbox   = e107::url('pm','index','', array('query'=>array('mode'=>'inbox')));
-		$urlOutbox  = e107::url('pm','index','', array('query'=>array('mode'=>'outbox')));
-		$urlCompose = e107::url('pm','index','', array('query'=>array('mode'=>'send')));
+		$urlInbox   = pm_url('inbox');
+		$urlOutbox  = pm_url('outbox');
+		$urlCompose = pm_url('send');
 		return '<a class="pm-nav nav-link dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" aria-label="'.$aria.'">'.$icon.$count.'</a>
 		<ul class="dropdown-menu dropdown-menu-right dropdown-menu-end">
 			<li><a class="dropdown-item" href="'.$urlInbox.'">'.LAN_PLUGIN_PM_INBOX.'</a></li>
@@ -91,13 +91,13 @@ class pm_shortcodes extends e_shortcode
 		
 		$pm_prefs = e107::getPlugPref('pm');
 
-		$url = e107::url('pm','index').'?send.'.varset($parm['user']);
+		$url = pm_url('send.'.varset($parm['user']));
 
 		require_once(e_PLUGIN."pm/pm_class.php");
 
 		$pm = new private_message;
 
-		$glyph  = empty($parm['glyph']) ? 'fa-paper-plane' : $parm['glyph'];
+		$glyph  = empty($parm['glyph']) ? 'outbox' : $parm['glyph'];
 		$class  = empty($parm['class']) ? 'sendpm btn btn-sm btn-default btn-secondary' : $parm['class'];
 
 

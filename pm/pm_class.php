@@ -228,8 +228,11 @@ class private_message
 		$qry = "SELECT COUNT(*) AS cnt FROM `#private_msg` AS pm
 		WHERE pm.{$ownerCol} = ".USERID." AND pm.pm_sent > ".(int) $info['pm_sent']." AND {$delCol}";
 
-		$row = $sql->execute($qry) ? $sql->db_getRow() : false;
-		$newer = ($row) ? (int) varset($row['cnt'], 0) : 0;
+		$rows = $sql->execute($qry) ? $sql->db_getList() : array();
+		// db_getList() is 0-indexed in some e107 builds and 1-indexed in
+		// others, so grab the first row key-agnostically.
+		$row = !empty($rows) ? reset($rows) : array();
+		$newer = (int) varset($row['cnt'], 0);
 
 		return intdiv($newer, $perpage) * $perpage;
 	}
@@ -916,7 +919,7 @@ class private_message
 
 		}
 
-		$url = e107::url('pm','index', null, array('mode'=>'full')).'?show.'.$pmid;
+		$url = function_exists('pm_url') ? pm_url('show.'.$pmid, array(), 'full') : (e107::url('pm','index', null, array('mode'=>'full')).'?show.'.$pmid);
 
 		// Privacy: the notification carries no message content - no sender name,
 		// subject, date or attachment count. Only a nudge to log in and read it.
@@ -957,7 +960,7 @@ class private_message
 		require_once(e_HANDLER.'mail.php');
 		$subject = LAN_PM_106." ".$pmInfo['sent_name'];
 
-		$pmlink = e107::url('pm','index', null, array('mode'=>'full')).'?show.'.$pmInfo['pm_id'];
+		$pmlink = function_exists('pm_url') ? pm_url('show.'.$pmInfo['pm_id'], array(), 'full') : (e107::url('pm','index', null, array('mode'=>'full')).'?show.'.$pmInfo['pm_id']);
 
 		$txt = str_replace("{UNAME}", $pmInfo['sent_name'], LAN_PM_107)." ".date('l F dS Y h:i:s A')."\n\n";
 		$txt .= LAN_PM_108." ".date('l F dS Y h:i:s A', $pmInfo['pm_sent'])."\n";

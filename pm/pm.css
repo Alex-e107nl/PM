@@ -337,7 +337,7 @@
 
 /* Body: comfortable reading size, generous line-height */
 .pm-pane .pm-msg-body {
-  font-size: 0.875rem;
+  font-size: 0.9375remm;
   line-height: 1.7;
   color: var(--bs-body-color);
   overflow-wrap: break-word;
@@ -637,4 +637,19 @@
 }
 .pagination {
   margin: 6px!important;
+}
+/* Compact pager: tight pagination for the narrow pane-2 column. */
+.pm-pager .pagination {
+  --bs-pagination-font-size: 0.875rem;
+  --bs-pagination-padding-x: 0.45rem;
+  --bs-pagination-padding-y: 0.15rem;
+  --bs-pagination-margin-start: -1px;
+  --bs-pagination-border-radius: 0.25rem;
+}
+.pm-pager .page-link {
+  min-width: 1.6em;
+  text-align: center;
+}
+.pm-pager .page-item.disabled .page-link {
+  opacity: 0.45;
 }

@@ -41,25 +41,10 @@
 
 	if(!defined('ATTACHMENT_ICON'))
 	{
-		if(deftrue('BOOTSTRAP') && deftrue('FONTAWESOME'))
-		{
-			define('ATTACHMENT_ICON', $tp->toGlyph('fa-paperclip'));
-		}
-		else
-		{
-
-			define('ATTACHMENT_ICON', "<img src='" . e_PLUGIN . "pm/images/attach.png' alt='' />");
-		}
+		define('ATTACHMENT_ICON', pm_icon('attach'));
 	}
 
-	if(deftrue('BOOTSTRAP') && deftrue('FONTAWESOME'))
-	{
-		define('PM_DELETE_ICON', $tp->toGlyph('fa-trash', 'fw=1'));
-	}
-	else
-	{
-		define("PM_DELETE_ICON", "<img src='" . e_PLUGIN_ABS . "pm/images/mail_delete.png'  alt='" . LAN_DELETE . "' class='icon S16' />");
-	}
+	define('PM_DELETE_ICON', pm_icon('delete'));
 
 	list($pmRoute) = explode('&', e_QUERY, 2);
 
@@ -104,6 +89,9 @@
 	}
 
 	//$pm_prefs = $sysprefs->getArray('pm_prefs');
+
+	// Form action for the current route (SEF aware); keeps an active search alive.
+	$pmFormAction = pm_url($pmRoute, $pm_search !== '' ? array('pm_search' => $pm_search) : array());
 
 	$pm_prefs = e107::getPlugPref('pm');
 
@@ -221,7 +209,7 @@
 
 //		$PM_SEND_PM = $this->updateTemplate($PM_SEND_PM);
 
-			$text = "<form {$enc} method='post' action='" . e_REQUEST_SELF . "' id='dataform'>
+			$text = "<form {$enc} method='post' action='" . pm_url() . "' id='dataform'>
 		<div><input type='hidden' name='numsent' value='{$pm_outbox['outbox']['total']}' />" .
 				e107::getParser()->parseTemplate($PM_SEND_PM, true, $sc) .
 				'</div></form>';
@@ -239,6 +227,7 @@
 
 		function show_inbox($start = 0, $search = '')
 		{
+			global $pmFormAction;
 			$tp = e107::getParser();
 
 //		$tpl_file = THEME.'pm_template.php';
@@ -278,7 +267,7 @@
 					$PM_INBOX_EMPTY = $this->updateTemplate($PM_INBOX['empty']);
 					$PM_INBOX_FOOTER = $this->updateTemplate($PM_INBOX['end']);
 			*/
-			$txt = "<form method='post' action='" . e_REQUEST_SELF . "?" . e_QUERY . "'>";
+			$txt = "<form method='post' action='" . $pmFormAction . ">";
 			$txt .= $tp->parseTemplate($PM_INBOX['start'], true, $sc);
 
 			if($pmlist['total_messages'])
@@ -315,6 +304,7 @@
 		 */
 		function show_outbox($start = 0, $search = '')
 		{
+			global $pmFormAction;
 			$tp = e107::getParser();
 
 //		$tpl_file = THEME.'pm_template.php';
@@ -350,7 +340,7 @@
 					$PM_OUTBOX_EMPTY = $this->updateTemplate($PM_OUTBOX['empty']);
 					$PM_OUTBOX_FOOTER = $this->updateTemplate($PM_OUTBOX['end']);
 			*/
-			$txt = "<form method='post' action='" . e_REQUEST_SELF . "?" . e_QUERY . "'>";
+			$txt = "<form method='post' action='" . $pmFormAction . ">";
 			$txt .= $tp->parseTemplate($PM_OUTBOX['start'], true, $sc);
 
 			if($pmlist['total_messages'])
@@ -429,11 +419,11 @@
 
 			if($comeFrom == 'outbox')
 			{
-				$bread = array('text' => LAN_PLUGIN_PM_OUTBOX, 'url' => e107::url('pm', 'index') . '?mode=outbox');
+				$bread = array('text' => LAN_PLUGIN_PM_OUTBOX, 'url' => pm_url('outbox'));
 			}
 			else
 			{
-				$bread = array('text' => LAN_PLUGIN_PM_INBOX, 'url' => e107::url('pm', 'index') . '?mode=inbox');
+				$bread = array('text' => LAN_PLUGIN_PM_INBOX, 'url' => pm_url('inbox'));
 			}
 
 			$ns->tablerender(LAN_PM, $this->breadcrumb($bread, '#' . $pmid) . $txt);
@@ -479,6 +469,7 @@
 		 */
 		public function showBlocked($start = 0)
 		{
+			global $pmFormAction;
 			$tp = e107::getParser();
 //		$tpl_file = THEME.'pm_template.php';
 //		include(is_readable($tpl_file) ? $tpl_file : e_PLUGIN.'pm/pm_template.php');
@@ -513,7 +504,7 @@
 					$PM_BLOCKED_FOOTER  = $this->updateTemplate($PM_BLOCKED['end']);
 			*/
 
-			$txt = "<form method='post' action='" . e_REQUEST_SELF . "?" . e_QUERY . "'>";
+			$txt = "<form method='post' action='" . $pmFormAction . ">";
 			$txt .= $tp->parseTemplate($PM_BLOCKED['start'], true, $sc);
 
 			if($pmTotalBlocked = count($pmBlocks))
@@ -766,7 +757,7 @@
 			}
 
 			$array = array();
-			$array[0] = array('text' => LAN_PM, 'url' => e107::url('pm', 'index'));
+			$array[0] = array('text' => LAN_PM, 'url' => pm_url());
 
 			if(is_string($type))
 			{
@@ -797,6 +788,7 @@
 	 */
 	function show_drafts($start = 0, $search = '')
 	{
+			global $pmFormAction;
 		$tp = e107::getParser();
 
 		if(THEME_LEGACY === true)
@@ -820,7 +812,7 @@
 		$sc->pmNextPrev = array('start' => $start, 'total' => $draftlist['total_messages']);
 		$sc->wrapper('pm');
 
-		$txt = "<form method='post' action='" . e_REQUEST_SELF . "?" . e_QUERY . "'>";
+		$txt = "<form method='post' action='" . $pmFormAction . ">";
 		$txt .= $tp->parseTemplate($PM_DRAFTS['start'], true, $sc);
 
 		if($draftlist['total_messages'])
@@ -894,7 +886,7 @@
 		$sc->setVars($pm_info);
 		$sc->wrapper('pm');
 
-		$text = "<form {$enc} method='post' action='" . e_REQUEST_SELF . "' id='dataform'>";
+		$text = "<form {$enc} method='post' action='" . pm_url() . "' id='dataform'>";
 		$text .= "<div><input type='hidden' name='numsent' value='{$pm_outbox['outbox']['total']}' />";
 		$text .= e107::getParser()->parseTemplate($PM_SEND_PM, true, $sc);
 		$text .= "</div></form>";
@@ -907,7 +899,6 @@
 	 */
 	public function renderFolderNav($activeFolder = 'inbox')
 	{
-		$base = e107::url('pm', 'index');
 		$inboxInfo = $this->pmManager->pm_getInfo('inbox');
 		$unread = (int) varset($inboxInfo['inbox']['unread'], 0);
 		$draftCount = (int) $this->draft_count();
@@ -918,15 +909,15 @@
 			->count();
 
 		$folders = array(
-			array('key'=>'inbox','label'=>LAN_PLUGIN_PM_INBOX,'icon'=>'&#9993;','badge'=>$unread,'badgeClass'=>'text-bg-danger','url'=>$base.'?mode=inbox'),
-			array('key'=>'outbox','label'=>LAN_PLUGIN_PM_OUTBOX,'icon'=>'&#8593;','badge'=>'','badgeClass'=>'','url'=>$base.'?mode=outbox'),
-			array('key'=>'drafts','label'=>defset('LAN_PM_135','Drafts'),'icon'=>'&#9998;','badge'=>$draftCount,'badgeClass'=>'text-bg-secondary','url'=>$base.'?mode=drafts'),
-			array('key'=>'blocked','label'=>defset('LAN_PM_151','Blocked'),'icon'=>'&#9940;','badge'=>$blockedCount,'badgeClass'=>'text-bg-warning','url'=>$base.'?mode=blocked'),
+			array('key'=>'inbox','label'=>LAN_PLUGIN_PM_INBOX,'icon'=>pm_icon('inbox'),'badge'=>$unread,'badgeClass'=>'text-bg-danger','url'=>pm_url('inbox')),
+			array('key'=>'outbox','label'=>LAN_PLUGIN_PM_OUTBOX,'icon'=>pm_icon('outbox'),'badge'=>'','badgeClass'=>'','url'=>pm_url('outbox')),
+			array('key'=>'drafts','label'=>defset('LAN_PM_135','Drafts'),'icon'=>pm_icon('drafts'),'badge'=>$draftCount,'badgeClass'=>'text-bg-secondary','url'=>pm_url('drafts')),
+			array('key'=>'blocked','label'=>defset('LAN_PM_151','Blocked'),'icon'=>pm_icon('blocked'),'badge'=>$blockedCount,'badgeClass'=>'text-bg-warning','url'=>pm_url('blocked')),
 		);
 
 		$h = '<div class="pm-sidebar-inner">';
-		$h .= '<a class="btn btn-primary w-100 mb-3 pm-new-btn" href="' . $base . '?mode=send">';
-		$h .= '&#9992; ' . defset('LAN_PLUGIN_PM_NEW','New Message') . '</a>';
+		$h .= '<a class="btn btn-primary w-100 mb-3 pm-new-btn" href="' . pm_url('send') . '">';
+		$h .= pm_icon('outbox') . ' ' . defset('LAN_PLUGIN_PM_NEW','New Message') . '</a>';
 		$h .= '<ul class="pm-folder-list list-unstyled mb-0">';
 		foreach ($folders as $f) {
 			$active = ($activeFolder===$f['key'] || ($activeFolder==='send' && $f['key']==='inbox')) ? ' active' : '';
@@ -1234,7 +1225,7 @@
 		default:
 			$right_html = '<div class="pm-pane-placeholder d-flex align-items-center justify-content-center h-100">'
 				. '<div class="text-center text-muted">'
-				. '<div class="fs-1 mb-2">&#9993;</div>'
+				. '<div class="fs-1 mb-2">' . pm_icon('inbox') . '</div>'
 				. '<p class="mb-0">' . defset('LAN_PM_139', 'Select a message') . '</p>'
 				. '</div></div>';
 			break;
@@ -1249,7 +1240,7 @@
 	if(in_array($pm_folder, array('inbox', 'outbox', 'drafts'), true))
 	{
 		$search_label  = defset('LAN_PM_158', 'Search messages...');
-		$search_action = e_SELF . '?' . $pm_folder;
+		$search_action = pm_url($pm_folder);
 		$searchbox = '<div class="p-2 border-bottom">'
 			. '<form method="get" action="' . htmlspecialchars($search_action, ENT_QUOTES, 'UTF-8') . '">'
 			. '<input type="search" name="pm_search" id="pm-search" class="form-control pm-search" placeholder="' . $search_label . '" aria-label="' . $search_label . '" value="' . htmlspecialchars($pm_search, ENT_QUOTES, 'UTF-8') . '">'
@@ -1294,6 +1285,17 @@
 		}, 400);
 	});
 })();
+
+	// Highlight the active message row in pane 2.
+	(function () {
+		var path = window.location.pathname;
+		var anchors = document.querySelectorAll('.pm-row-anchor');
+		for (var i = 0; i < anchors.length; i++) {
+			if (anchors[i].getAttribute('href') === path) {
+				anchors[i].classList.add('active');
+			}
+		}
+	})();
 </script>";
 
 	$layout = '<div class="pm-3pane h-100">'

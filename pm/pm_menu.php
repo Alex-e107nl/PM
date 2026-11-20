@@ -74,9 +74,9 @@ $template  = e107::getTemplate('pm', 'pm_menu');
 if(!isset($template))
 {
 	// Fallback (BS5.3) – used when pm_menu_template.php is missing
-	$inboxUrl  = e107::url('pm', 'index', '', array('query' => array('mode' => 'inbox')));
-	$outboxUrl = e107::url('pm', 'index', '', array('query' => array('mode' => 'outbox')));
-	$blockedUrl= e107::url('pm', 'index', '', array('query' => array('mode' => 'blocked')));
+	$inboxUrl  = pm_url('inbox');
+	$outboxUrl = pm_url('outbox');
+	$blockedUrl= pm_url('blocked');
 
 	$template = "
 <nav class='pm-menu' aria-label='".LAN_PM."'>
@@ -111,7 +111,9 @@ $sc->wrapper('pm_menu');
 $txt = "\n".$tp->parseTemplate($template, TRUE, $sc);
 
 $inboxNew = (int) varset($pm_inbox['inbox']['new'], 0);
-if($inboxNew > 0 && $pm_prefs['popup'] && strpos(e_SELF, 'pm.php') === FALSE && $_COOKIE['pm-alert'] != 'ON')
+$pmSelfBase = rtrim(e107::url('pm', 'index', array('route' => ''), array('mode' => 'raw')), '?');
+$onPmPage   = (strpos(e_SELF, 'pm.php') !== FALSE || strpos(e_SELF, $pmSelfBase) !== FALSE);
+if($inboxNew > 0 && $pm_prefs['popup'] && !$onPmPage && $_COOKIE['pm-alert'] != 'ON')
 {
 	$txt .= pm_show_popup($pm_inbox, $pm_prefs['popup_delay']);
 }

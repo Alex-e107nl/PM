@@ -26,13 +26,13 @@
 if (!defined('e107_INIT')) { exit; }
 
 // Base URL every relative PM action link is built from.
-$PM_BASE = e107::url('pm', 'index') . '?';
+$PM_BASE = function_exists('pm_url_prefix') ? pm_url_prefix() : (e107::url('pm', 'index') . '?');
 
 if(deftrue('BOOTSTRAP') && deftrue('FONTAWESOME'))
 {
-	define('PM_READ_ICON', e107::getParser()->toGlyph('fa-envelope'));
-	define('PM_UNREAD_ICON', e107::getParser()->toGlyph('fa-envelope-open'));
-	$PM_DRAFT_GLYPH = e107::getParser()->toGlyph('fa-edit');
+	define('PM_READ_ICON', pm_icon('check'));
+	define('PM_UNREAD_ICON', pm_icon('dot'));
+	$PM_DRAFT_GLYPH = pm_icon('edit');
 }
 else
 {
@@ -113,7 +113,7 @@ $PM_TEMPLATE['inbox']['item'] = "
 $PM_TEMPLATE['inbox']['empty'] = "
 <li class='pm-empty'>
 	<div class='pm-empty-state d-flex flex-column align-items-center justify-content-center text-center text-muted' style='padding:4rem 1.5rem;'>
-		<div class='fs-1 mb-3' aria-hidden='true'>&#9993;</div>
+		<div class='fs-1 mb-3' aria-hidden='true'>' . pm_icon('inbox') . '</div>
 		<p class='mb-1 fw-semibold'>" . LAN_PM_34 . "</p>
 		<p class='mb-0 small'>" . defset('LAN_PM_154', 'New messages will appear here.') . "</p>
 	</div>
@@ -147,7 +147,7 @@ $PM_TEMPLATE['outbox']['item'] = "
 $PM_TEMPLATE['outbox']['empty'] = "
 <li class='pm-empty'>
 	<div class='pm-empty-state d-flex flex-column align-items-center justify-content-center text-center text-muted' style='padding:4rem 1.5rem;'>
-		<div class='fs-1 mb-3' aria-hidden='true'>&#9992;</div>
+		<div class='fs-1 mb-3' aria-hidden='true'>' . pm_icon('outbox') . '</div>
 		<p class='mb-1 fw-semibold'>" . LAN_PM_34 . "</p>
 		<p class='mb-0 small'>" . defset('LAN_PM_157', 'Messages you send will appear here.') . "</p>
 	</div>
@@ -181,7 +181,7 @@ $PM_TEMPLATE['drafts']['item'] = "
 $PM_TEMPLATE['drafts']['empty'] = "
 <li class='pm-empty'>
 	<div class='pm-empty-state d-flex flex-column align-items-center justify-content-center text-center text-muted' style='padding:4rem 1.5rem;'>
-		<div class='fs-1 mb-3' aria-hidden='true'>&#9998;</div>
+		<div class='fs-1 mb-3' aria-hidden='true'>' . pm_icon('drafts') . '</div>
 		<p class='mb-1 fw-semibold'>" . defset('LAN_PM_136', 'No drafts') . "</p>
 		<p class='mb-0 small'>" . defset('LAN_PM_155', 'Messages you save will appear here.') . "</p>
 	</div>
