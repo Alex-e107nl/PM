@@ -8,7 +8,7 @@ return [
     'LAN_PLUGIN_PM_URL_DEFAULT_DESCR' => "Default",
     'LAN_PLUGIN_PM_INBOX' => "Inbox",
     'LAN_PLUGIN_PM_OUTBOX' => "Outbox",
-    'LAN_PLUGIN_PM_NEW' => "Send New Message",
+    'LAN_PLUGIN_PM_NEW' => "Send Message",
     'LAN_PLUGIN_PM_TO' => "To",
     'LAN_PLUGIN_PM_FROM' => "From",
     'LAN_PLUGIN_PM_SUB' => "Subject",

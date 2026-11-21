@@ -40,7 +40,6 @@ PM_FORM_TOUSER	- displays user entry box and selector
 PM_FORM_TOCLASS - displays user class selector (when allowed)
 PM_FORM_SUBJECT	- displays subject of current PM
 PM_FORM_MESSAGE - displays message of current PM
-PM_EMOTES
 PM_POST_BUTTON
 PM_PREVIEW_BUTTON
 PM_ATTACHMENT
@@ -253,7 +252,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 				if(isset($_POST['quote']))
 				{
 					$t = time();
-					$value = "\n\n\n\n\n\n\n[quote{$t}={$this->var['from_name']}]\n".trim($this->var['pm_text'])."[/quote{$t}]";
+					$value = "<p><br></p>[quote{$t}={$this->var['from_name']}]\n".trim($this->var['pm_text'])."[/quote{$t}]\n<p><br></p>";
 				}
 				else
 				{
@@ -283,18 +282,6 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 			return e107::getForm()->bbarea('pm_message', $value, null, null, 'medium', $options);
 		}
 
-
-		public function sc_pm_emotes()
-		{
-			$active = e107::pref('core','smiley_activate');
-
-			if(empty($active))
-			{
-				return null;
-			}
-
-			return r_emote();
-		}
 
 
 		public function sc_pm_post_button()
@@ -806,7 +793,7 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 				return $u;
 			};
 
-			$h = '<ul class="pagination pagination-sm mb-0">';
+			$h = '<ul class="pagination pagination-sm mb-2">';
 
 			// Previous arrow
 			if ($currentPage > 1) {

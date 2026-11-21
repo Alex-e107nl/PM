@@ -33,7 +33,7 @@ return [
     'LAN_PM_32' => "Received",
     'LAN_PM_33' => "Sent",
     'LAN_PM_34' => "No Messages",
-    'LAN_PM_35' => "Send new message",
+    'LAN_PM_35' => "Send message",
     'LAN_PM_36' => "total",
     'LAN_PM_37' => "unread",
     'LAN_PM_38' => "PM Sent to userclass",

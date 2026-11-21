@@ -47,7 +47,6 @@ else
  */
 $PM_WRAPPER['PM_ATTACHMENT_ICON'] = " {---}";
 $PM_WRAPPER['PM_ATTACHMENTS']     = "<ul class='pm-att-list list-unstyled'>{---}</ul>";
-$PM_WRAPPER['PM_EMOTES']          = "<div class='pm-emotes mt-3'>{---}</div>";
 $PM_WRAPPER['PM_ATTACHMENT']      = "<div class='pm-attach-field mb-3'>{---}</div>";
 $PM_WRAPPER['PM_RECEIPT']         = "<div class='form-check pm-receipt-field mt-3 mb-0'>{---}</div>";
 $PM_WRAPPER['PM_REPLY']           = "{---}";
@@ -74,13 +73,13 @@ $PM_TEMPLATE['send'] = "
 		<div class='mb-3'>
 			<label class='form-label'>".LAN_PM_6."</label>
 			{PM_FORM_MESSAGE}
-			{PM_EMOTES}
 			{PM_RECEIPT}
 		</div>
 		{PM_ATTACHMENT}
 		<div class='d-flex flex-wrap gap-2 pt-2'>
 			{PM_POST_BUTTON}
 			{PM_SAVE_DRAFT_BUTTON}
+			<a href='".pm_url('inbox')."' class='btn btn-outline-secondary ms-auto'>".defset('LAN_PM_161', 'Cancel')."</a>
 		</div>
 	</div>
 </div>
@@ -102,7 +101,7 @@ $PM_TEMPLATE['inbox']['item'] = "
 				<span class='pm-row-who'>{PM_FROM}</span>
 				<span class='pm-row-date'>{PM_DATE}</span>
 			</span>
-			<span class='pm-row-subject'>{PM_SUBJECT}{PM_ATTACHMENT_ICON}</span>
+			<span class='pm-row-subject'><span class='pm-row-subject-text'>{PM_SUBJECT}</span>{PM_ATTACHMENT_ICON}</span>
 		</span>
 	</a>
 	<span class='pm-row-actions'>{PM_BLOCK_USER}{PM_DELETE=inbox}</span>
@@ -113,7 +112,7 @@ $PM_TEMPLATE['inbox']['item'] = "
 $PM_TEMPLATE['inbox']['empty'] = "
 <li class='pm-empty'>
 	<div class='pm-empty-state d-flex flex-column align-items-center justify-content-center text-center text-muted' style='padding:4rem 1.5rem;'>
-		<div class='fs-1 mb-3' aria-hidden='true'>' . pm_icon('inbox') . '</div>
+		<div class='fs-1 mb-3' aria-hidden='true'>" . pm_icon('inbox') . "</div>
 		<p class='mb-1 fw-semibold'>" . LAN_PM_34 . "</p>
 		<p class='mb-0 small'>" . defset('LAN_PM_154', 'New messages will appear here.') . "</p>
 	</div>
@@ -136,7 +135,7 @@ $PM_TEMPLATE['outbox']['item'] = "
 				<span class='pm-row-who'>{PM_TO}</span>
 				<span class='pm-row-date'>{PM_DATE}</span>
 			</span>
-			<span class='pm-row-subject'>{PM_SUBJECT}{PM_ATTACHMENT_ICON}</span>
+			<span class='pm-row-subject'><span class='pm-row-subject-text'>{PM_SUBJECT}</span>{PM_ATTACHMENT_ICON}</span>
 		</span>
 	</a>
 	<span class='pm-row-actions'>{PM_DELETE=outbox}</span>
@@ -147,7 +146,7 @@ $PM_TEMPLATE['outbox']['item'] = "
 $PM_TEMPLATE['outbox']['empty'] = "
 <li class='pm-empty'>
 	<div class='pm-empty-state d-flex flex-column align-items-center justify-content-center text-center text-muted' style='padding:4rem 1.5rem;'>
-		<div class='fs-1 mb-3' aria-hidden='true'>' . pm_icon('outbox') . '</div>
+		<div class='fs-1 mb-3' aria-hidden='true'>" . pm_icon('outbox') . "</div>
 		<p class='mb-1 fw-semibold'>" . LAN_PM_34 . "</p>
 		<p class='mb-0 small'>" . defset('LAN_PM_157', 'Messages you send will appear here.') . "</p>
 	</div>
@@ -170,7 +169,7 @@ $PM_TEMPLATE['drafts']['item'] = "
 				<span class='pm-row-who'>".LAN_PM_140.": {PM_DRAFT_TO}</span>
 				<span class='pm-row-date'>{PM_DRAFT_DATE}</span>
 			</span>
-			<span class='pm-row-subject'>{PM_DRAFT_SUBJECT}</span>
+			<span class='pm-row-subject'><span class='pm-row-subject-text'>{PM_DRAFT_SUBJECT}</span></span>
 		</span>
 	</a>
 	<span class='pm-row-actions'>{PM_DRAFT_DELETE}</span>
@@ -181,7 +180,7 @@ $PM_TEMPLATE['drafts']['item'] = "
 $PM_TEMPLATE['drafts']['empty'] = "
 <li class='pm-empty'>
 	<div class='pm-empty-state d-flex flex-column align-items-center justify-content-center text-center text-muted' style='padding:4rem 1.5rem;'>
-		<div class='fs-1 mb-3' aria-hidden='true'>' . pm_icon('drafts') . '</div>
+		<div class='fs-1 mb-3' aria-hidden='true'>" . pm_icon('drafts') . "</div>
 		<p class='mb-1 fw-semibold'>" . defset('LAN_PM_136', 'No drafts') . "</p>
 		<p class='mb-0 small'>" . defset('LAN_PM_155', 'Messages you save will appear here.') . "</p>
 	</div>

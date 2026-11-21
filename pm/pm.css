@@ -217,9 +217,21 @@
 .pm-row-subject {
   font-size: 0.8125rem;
   color: var(--bs-secondary-color, #6c757d);
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+.pm-row-subject-text {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.pm-row-subject svg {
+  flex-shrink: 0;
+  width: 0.85em;
+  height: 0.85em;
 }
 
 .pm-att-badge {

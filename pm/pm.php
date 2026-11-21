@@ -1231,6 +1231,12 @@
 			break;
 	}
 
+	// Move alerts into the right pane (pane 3) so they don't push the 3-pane layout down.
+	$pm_alerts = $mes->render();
+	if ($pm_alerts !== '') {
+		$right_html = $pm_alerts . $right_html;
+	}
+
 	// Compose layout
 	$pm_active = ($action === 'send') ? 'send' : $pm_folder;
 	$left_html = $pm->renderFolderNav($pm_active);
@@ -1304,7 +1310,7 @@
 		. '<div class="pm-pane overflow-auto">' . $right_html . '</div>'
 		. '</div>' . $searchjs;
 
-	$ns->tablerender(LAN_PM, $mes->render() . $layout, 'PM');
+	$ns->tablerender(LAN_PM, $layout, 'PM');
 
 
 
