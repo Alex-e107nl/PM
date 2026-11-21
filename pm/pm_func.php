@@ -265,10 +265,10 @@ function pm_icon($name)
         case 'inbox':
             return "<svg {$s}><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><path d=\"M22 7l-10 7L2 7\"/></svg>";
         case 'outbox':
-            return "<svg {$s}><line x1=\"22\" y1=\"2\" x2=\"11\" y2=\"13\"/><polygon points=\"22 2 15 22 11 13 2 9 22 2\"/></svg>";
+            return "<svg class=\"me-1\" {$s}><line x1=\"22\" y1=\"2\" x2=\"11\" y2=\"13\"/><polygon points=\"22 2 15 22 11 13 2 9 22 2\"/></svg>";
         case 'drafts':
         case 'edit':
-            return "<svg {$s}><path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"/></svg>";
+            return "<svg class=\"me-1\" {$s}><path d=\"M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z\"/></svg>";
         case 'blocked':
         case 'ban':
             return "<svg {$s}><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"4.93\" y1=\"4.93\" x2=\"19.07\" y2=\"19.07\"/></svg>";
