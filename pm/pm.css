@@ -31,7 +31,7 @@
 
 .pm-pane {
   padding: 1rem;
-  background: var(--bs-body-bg);
+  background: var(--bs-bg-surface);
   min-width: 0;
 }
 
