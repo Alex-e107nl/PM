@@ -251,11 +251,14 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 			{
 				if(isset($_POST['quote']))
 				{
-					$t = time();
-					$value = "<p><br></p>[quote{$t}={$this->var['from_name']}]\n".trim($this->var['pm_text'])."[/quote{$t}]\n<p><br></p>";
+					$author = htmlspecialchars($this->var['from_name'], ENT_QUOTES, 'UTF-8');
+					$quoted = e107::getParser()->toHTML($this->var['pm_text'], true);
+					$value = "<p><br></p><blockquote><p><em>{$author}</em></p>{$quoted}</blockquote><p><br></p>";
 				}
-				else
+				elseif(vartrue($this->var['pm_is_draft']))
 				{
+					// Draft edit: reload the saved draft text into the editor.
+					// A plain reply (no quote checked) must start with an empty editor.
 					$value = $this->var['pm_text'];
 				}
 			}
