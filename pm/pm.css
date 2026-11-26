@@ -31,7 +31,7 @@
 
 .pm-pane {
   padding: 1rem;
-  background: var(--bs-bg-surface);
+  background: var(--bs-body-bg);
   min-width: 0;
 }
 
@@ -360,7 +360,7 @@
 
 .pm-pane .pm-msg-body p {
   margin: 0 0 0.875rem 0;
-  font-size: 0.875rem;
+/*  font-size: 0.875rem; */
 }
 
 .pm-pane .pm-msg-body img {

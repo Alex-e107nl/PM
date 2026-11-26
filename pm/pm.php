@@ -1107,7 +1107,21 @@
 
 	if(isset($_POST['postpm']))
 	{
+		$draftId = (int) varset($_POST['draft_id'], 0);
+		$obInfo = varset($pmManager->pm_getInfo('outbox'), array());
+		$outboxBefore = (int) varset(varset($obInfo['outbox'], array())['total'], 0);
 		$message = $pm->post_pm();
+		if($draftId > 0)
+		{
+			// Draft send: delete the draft only once the message has actually landed in the outbox.
+			$pmManager->pm_getInfo('clear');
+			$obInfo = varset($pmManager->pm_getInfo('outbox'), array());
+			$outboxAfter = (int) varset(varset($obInfo['outbox'], array())['total'], 0);
+			if($outboxAfter > $outboxBefore)
+			{
+				$pm->draft_delete($draftId);
+			}
+		}
 		$action = 'outbox';
 	}
 
