@@ -120,4 +120,14 @@ return [
     'LAN_PM_157' => "Messages you send will appear here.",
     'LAN_PM_158' => "Search messages...",
     'LAN_PM_159' => "Clear search",
-    'LAN_PM_160' => '{COUNT} message(s) found for "{SEARCH}"',];
+    'LAN_PM_160' => '{COUNT} message(s) found for "{SEARCH}"',
+    'LAN_PM_161' => 'Cancel',
+    'LAN_PM_162' => 'Print',
+    'LAN_PM_163' => 'Attachments',
+    'LAN_PM_164' => 'download',
+    'LAN_PM_165' => 'Close',
+    'LAN_PM_166' => 'Unknown sender',
+    'LAN_PM_167' => 'Unknown recipient',
+    'LAN_PM_168' => 'Printed',
+    'LAN_PM_169' => 'Private message',
+];

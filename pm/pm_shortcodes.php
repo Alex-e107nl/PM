@@ -1055,6 +1055,12 @@ if(!class_exists('plugin_pm_pm_shortcodes'))
 	}
 
 
+	public function sc_pm_print()
+	{
+		// Print-friendly copy in a new window (standalone view, auto print dialog).
+		return "<a class='btn btn-default btn-secondary' title='".defset('LAN_PM_162', 'Print')."' href='".pm_url('print.'.$this->var['pm_id'])."' target='_blank' rel='noopener'>" . pm_icon('print') . " " . defset('LAN_PM_162', 'Print') . "</a>";
+	}
+
 	private function url($route, $params = array())
 		{
 

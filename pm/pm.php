@@ -1102,6 +1102,19 @@
 		exit;
 	}
 
+	// Print view: standalone printable copy of a message (new window, auto print dialog).
+	if($action === 'print' && $pm_proc_id > 0 && !$pmIsPost)
+	{
+		$pm_row = $pm->pm_get($pm_proc_id);
+		if(!$pm_row || !$pm->isParticipant($pm_row))
+		{
+			e107::redirect(pm_url('inbox'));
+			exit;
+		}
+		pm_render_print_view($pm_row);
+		exit;
+	}
+
 
 	require_once(HEADERF);
 

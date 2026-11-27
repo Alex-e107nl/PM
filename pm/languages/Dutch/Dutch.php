@@ -129,4 +129,13 @@ define("LAN_PM_157", "Berichten die je verstuurt, verschijnen hier.");
 define("LAN_PM_158", "Berichten doorzoeken...");
 define("LAN_PM_159", "Zoekopdracht wissen");
 define('LAN_PM_160', '{COUNT} bericht(en) gevonden voor "{SEARCH}"');
+define("LAN_PM_161", "Annuleren");
+define("LAN_PM_162", "Afdrukken");
+define("LAN_PM_163", "Bijlagen");
+define("LAN_PM_164", "downloaden");
+define("LAN_PM_165", "Sluiten");
+define("LAN_PM_166", "Afzender onbekend");
+define("LAN_PM_167", "Ontvanger onbekend");
+define("LAN_PM_168", "Gedrukt");
+define("LAN_PM_169", "Privé bericht");
 

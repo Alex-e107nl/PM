@@ -237,6 +237,7 @@ $PM_TEMPLATE['show'] = "
 	{PM_ATTACHMENTS}
 	<footer class='pm-msg-actions d-flex flex-wrap gap-2 align-items-center'>
 		{PM_REPLY}
+		{PM_PRINT}
 		{PM_DELETE}
 	</footer>
 </article>
