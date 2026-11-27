@@ -4,6 +4,16 @@
 
 ---
 
+## Warning / Disclaimer
+
+Please note! Although we have made every effort and conducted extensive testing, 
+you must ALWAYS create a system backup before applying our code. We are under no 
+circumstances responsible for any damage or data loss resulting from the use of 
+our code. It is impossible to test every possible combination of systems, CMS 
+versions, servers, and PHP versions currently in use.
+
+---
+
 ## Badges
 
 [![e107](https://img.shields.io/badge/e107-2.x-1f6feb)](https://e107.org)
