@@ -103,3 +103,5 @@ define("ADLAN_PM_156", "Maakt een nieuwe sleutelversie aan en versleutelt alle o
 define("ADLAN_PM_157", "Ontbreekt - wordt automatisch aangemaakt bij eerste gebruik of via de knoppen hieronder.");
 define("ADLAN_PM_158", "Sommige berichten konden niet worden versleuteld. Voer opnieuw uit om te proberen.");
 define("ADLAN_PM_159", "Gebruik de WYSIWYG-editor voor de berichttekst (veilige front-endversie; gebruikers zonder HTML-rechten krijgen een gewoon tekstveld).");
+define("ADLAN_PM_160", "Migratie: %d gelezen, %d versleuteld, %d mislukt.");
+define("ADLAN_PM_161", "Berichten nog opgeslagen in platte tekst");

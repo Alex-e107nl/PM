@@ -4,6 +4,7 @@
 
 require_once(__DIR__.'/../../class2.php');
 require_once(__DIR__.'/pm_crypto.php');
+require_once(__DIR__.'/pm_class.php'); // maintPage/maintCryptoProcess need private_message
 if (!getperms('P')) 
 {
 	e107::redirect('admin');
@@ -526,6 +527,11 @@ class private_msg_ui extends e_admin_ui
 				$this->mainPageProcess();
 			}
 
+			if(isset($_POST['pm_maint_migrate']) || isset($_POST['pm_maint_rotate']))
+			{
+				$this->maintCryptoProcess();
+			}
+
 
 
 			$frm = e107::getForm();
@@ -579,11 +585,114 @@ class private_msg_ui extends e_admin_ui
 			";
 
 
+			$pm = new private_message();
+			$st = $pm->cryptoStatus();
+			$st['plaintext'] = $pm->countPlaintextMessages();
+
+			$keyStatus = $st['exists'] ? (string) $st['version'] : ADLAN_PM_157;
+
+			$btnMigrate = "<button type='submit' name='pm_maint_migrate' value='no-value' class='btn btn-success' onclick=\"return confirm('" . htmlspecialchars(ADLAN_PM_155, ENT_QUOTES, 'UTF-8') . "');\"><span>" . ADLAN_PM_153 . "</span></button>";
+			$btnRotate  = "<button type='submit' name='pm_maint_rotate' value='no-value' class='btn btn-danger' onclick=\"return confirm('" . htmlspecialchars(ADLAN_PM_156, ENT_QUOTES, 'UTF-8') . "');\"><span>" . ADLAN_PM_154 . "</span></button>";
+
+			$txt .= "
+			<fieldset id='plugin-pm-encryption'>
+			<legend>".ADLAN_PM_148."</legend>
+			<table class='table adminform'>
+			<colgroup>
+				<col class='col-label' />
+				<col class='col-control' />
+			</colgroup>
+			<tbody>
+			<tr>
+				<td>".ADLAN_PM_150."</td>
+				<td>".($st['supported'] ? LAN_YES : LAN_NO)."</td>
+			</tr>
+			<tr>
+				<td>".ADLAN_PM_151."</td>
+				<td>".htmlspecialchars($keyStatus, ENT_QUOTES, 'UTF-8')."</td>
+			</tr>
+			";
+
+			if($st['exists'] && !empty($st['path']))
+			{
+				$txt .= "
+			<tr>
+				<td>".ADLAN_PM_152."</td>
+				<td>".htmlspecialchars($st['path'], ENT_QUOTES, 'UTF-8')."</td>
+			</tr>";
+			}
+
+			$txt .= "
+			<tr>
+				<td>".ADLAN_PM_161."</td>
+				<td>".(int) $st['plaintext']."</td>
+			</tr>
+			</tbody>
+			</table>
+			<table class='table adminform'>
+			<colgroup>
+				<col class='col-label' />
+				<col class='col-control' />
+			</colgroup>
+			<tbody>
+			<tr>
+			<td>".ADLAN_PM_155."</td>
+			<td><form method='post' action='".e_SELF."?maint'>
+			".$btnMigrate."
+			</form></td>
+			</tr>
+			<td>".ADLAN_PM_156."</td>
+			<td><form method='post' action='".e_SELF."?maint'>
+			".$btnRotate."
+			</form>
+			</td>
+			</tr>
+			</tbody>
+			</table>
+			</fieldset>
+			";
 			return $txt;
 
 
 		}
 
+		/**
+		 *	One-shot crypto maintenance: legacy plaintext migration and key
+		 *	rotation. Both operations are idempotent and resumable, so re-
+		 *	running after a timeout simply continues where it stopped.
+		 *
+		 *	@return void
+		 */
+		private function maintCryptoProcess()
+		{
+			$mes = e107::getMessage();
+			$pm  = new private_message();
+
+			if(isset($_POST['pm_maint_migrate']))
+			{
+				e107::getLog()->add('PM_ADM_13', 'Legacy plaintext migration');
+				$sum = $pm->migrateEncryptMessages(200);
+
+				if($sum['encrypted'] > 0 || $sum['failed'] > 0)
+				{
+					$msg = sprintf(defset('ADLAN_PM_160', 'Migration: %d scanned, %d encrypted, %d failed.'), (int) $sum['rows'], (int) $sum['encrypted'], (int) $sum['failed']);
+					$mes->add($msg, $sum['failed'] > 0 ? E_MESSAGE_ERROR : E_MESSAGE_SUCCESS);
+				}
+				elseif(!empty($sum['note']))
+				{
+					$mes->add($sum['note'], E_MESSAGE_INFO);
+				}
+			}
+			elseif(isset($_POST['pm_maint_rotate']))
+			{
+				e107::getLog()->add('PM_ADM_14', 'Key rotation');
+				$sum = $pm->rotateKey(200);
+				if(!empty($sum['note']))
+				{
+					$mes->add($sum['note'], $sum['failed'] > 0 ? E_MESSAGE_ERROR : E_MESSAGE_SUCCESS);
+				}
+			}
+		}
 
 
 

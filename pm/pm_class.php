@@ -157,6 +157,45 @@ class private_message
 	}
 
 
+	/**
+	 * Count messages that still hold legacy plaintext in subject and/or body.
+	 * Encrypted payloads are base64('vN|' ...), so the first four base64 chars
+	 * reveal the key version; a non-empty field matching no known version
+	 * prefix is plaintext. Informational only - the migration itself checks
+	 * every field exactly (pm_crypto::isEncrypted()).
+	 *
+	 * @return int
+	 */
+	function countPlaintextMessages()
+	{
+		$prefixes = array();
+		for ($n = 1; $n <= 9; $n++)
+		{
+			$prefixes[] = substr(base64_encode('v' . $n . '|'), 0, 4);
+		}
+
+		$fieldConds = array();
+		foreach (array('pm_subject', 'pm_text') as $f)
+		{
+			$likes = array();
+			foreach ($prefixes as $p)
+			{
+				$likes[] = $f . " NOT LIKE '" . addslashes($p) . "%'";
+			}
+			$fieldConds[] = '(' . $f . " != '' AND " . implode(' AND ', $likes) . ')';
+		}
+
+		$qb = e107::getDb()->createQueryBuilder();
+		$qb->selectCount('pm_id', 'cnt');
+		$qb->from('private_msg');
+		// Developer SQL: fixed column names + server-generated prefixes, no user input.
+		$qb->where($qb->raw(implode(' OR ', $fieldConds)));
+
+		$row = $qb->fetchRow();
+		return (int) varset($row['cnt'], 0);
+	}
+
+
 	/*
 	 *	Get an existing PM
 	 *

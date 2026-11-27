@@ -94,4 +94,6 @@ return [
     'ADLAN_PM_157' => "Missing - created automatically on first use or via the buttons below.",
     'ADLAN_PM_158' => "Some messages could not be encrypted. Re-run to retry.",
     'ADLAN_PM_159' => "Use the WYSIWYG editor for the message body (safe front-end version; users without HTML-posting rights get a plain text area).",
+    'ADLAN_PM_160' => "Migration: %d scanned, %d encrypted, %d failed.",
+    'ADLAN_PM_161' => "Messages still stored in plaintext",
 ];

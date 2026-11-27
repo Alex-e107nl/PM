@@ -28,4 +28,6 @@ return [
     'LAN_AL_PM_ADM_10' => "PM: Error deleting limit data",
     'LAN_AL_PM_ADM_11' => "PM: Stored attachments could not be protected from direct download",
     'LAN_AL_PM_ADM_12' => "PM: Attachment refused, its directory could not be protected from direct download",
+    'LAN_AL_PM_ADM_13' => "PM: Legacy plaintext migration started",
+    'LAN_AL_PM_ADM_14' => "PM: Key rotation started",
 ];
